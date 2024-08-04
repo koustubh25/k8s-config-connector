@@ -1,0 +1,9 @@
+apiVersion: cloudfoundations.anz.com/v1alpha1
+kind: AppTeam
+metadata:
+  name: simple-jinja
+  namespace: myappteam
+spec:
+  project: anz-x-apps-platdev-99bb42
+  # This is important for some human to be access the project in pantheon
+  namespace: platform-kcc-poc-apps-platdev

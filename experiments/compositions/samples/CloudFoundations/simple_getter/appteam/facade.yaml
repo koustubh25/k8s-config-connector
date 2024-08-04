@@ -1,0 +1,8 @@
+apiVersion: cloudfoundations.anz.com/v1alpha1
+kind: AppTeamSimpleGetter
+metadata:
+  name: sourceconfig
+  namespace: myappteamsimplegetter
+spec:
+  namespace: platform-kcc-poc-apps-platdev
+  source_value: myvalue

@@ -152,7 +152,7 @@ spec:
         - --port=8443
         command:
         - /expander
-        image: gcr.io/krmapihosting-release/expander-helm:v0.0.1
+        image: gcr.io/krmapihosting-release/expander-helm:0.0.1
         name: helm
         resources:
           limits:

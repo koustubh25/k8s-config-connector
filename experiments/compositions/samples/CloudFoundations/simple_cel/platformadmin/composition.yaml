@@ -1,0 +1,100 @@
+apiVersion: composition.google.com/v1alpha1
+kind: CELConfiguration
+metadata:
+  name: teampage
+spec:
+  resources:
+  - name: configmap
+    template: ""
+    definition:
+      apiVersion: v1
+      kind: ConfigMap
+      metadata:
+        name: team-${cteams.metadata.name}-page
+        namespace: default
+      data:
+        name: ${cteams.metadata.name}
+---
+apiVersion: composition.google.com/v1alpha1
+kind: Composition
+metadata:
+  name: team-page-cel
+spec:
+  inputAPIGroup: cteams.facade.compositions.google.com    # Facade API
+  expanders:
+  - type: cel
+    version: v0.0.1
+    name: landing-page
+    template: ""
+    configref:
+      name: teampage
+      namespace: default
+---
+apiVersion: composition.google.com/v1alpha1
+kind: Facade
+metadata:
+  name: cel-team
+  namespace: default
+spec:
+  facadeKind: CTeam
+  openAPIV3Schema:
+  # Schema for the `spec` field
+    type: object
+    required:
+    - apps
+    properties:
+      apps:
+        type: array
+        items:
+          type: object
+          required:
+          - description
+          - name
+          properties:
+            contact:
+              type: string
+            description:
+              type: string
+            name:
+              type: string
+# ---
+# apiVersion: rbac.authorization.k8s.io/v1
+# kind: ClusterRole
+# metadata:
+#   name: composition-facade-g
+# rules:
+# - apiGroups:
+#   - facade.compositions.google.com
+#   resources:
+#   - '*'
+#   verbs:
+#   - get
+#   - list
+#   - patch
+#   - update
+#   - watch
+#   - create
+#   - delete
+# - apiGroups:
+#   - facade.compositions.google.com
+#   resources:
+#   - "*/status"
+#   verbs:
+#   - get
+#   - update
+# - apiGroups: ["*"]
+#   resources: ["*"]
+#   verbs: ["*"]
+# ---
+# apiVersion: rbac.authorization.k8s.io/v1
+# kind: ClusterRoleBinding
+# metadata:
+#   name: composition-facade-g
+# roleRef:
+#   apiGroup: rbac.authorization.k8s.io
+#   kind: ClusterRole
+#   name: composition-facade-g
+# subjects:
+# - kind: ServiceAccount
+#   name: composition-controller-manager
+#   namespace: composition-system

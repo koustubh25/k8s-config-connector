@@ -132,7 +132,7 @@ spec:
         - --port=8443
         command:
         - /expander
-        image: gcr.io/krmapihosting-release/expander-cel:v0.0.1
+        image: gcr.io/krmapihosting-release/expander-cel:0.0.1
         name: cel
         resources:
           limits:

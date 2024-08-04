@@ -1,0 +1,108 @@
+
+apiVersion: composition.google.com/v1alpha1
+kind: GetterConfiguration
+metadata:
+  name: sourceconfig-value
+  namespace: default
+spec:
+  valuesFrom:
+  - name: configRef
+    resourceRef:
+      group: cloudfoundations.anz.com
+      version: v1alpha1
+      kind: AppteamSimpleGetter
+      resource: appteamsimplegetters
+      name: sourceconfig
+    fieldRef:
+    - path: ".spec.source_value"
+      as: source_value
+---
+apiVersion: composition.google.com/v1alpha1
+kind: Composition
+metadata:
+  name: getter-composition
+  namespace: default
+spec:
+  inputAPIGroup: appteamsimplegetters.cloudfoundations.anz.com
+  namespaceMode: explicit
+  expanders:
+  - type: getter
+    version: v0.0.1
+    name: get-sourceconfig-value
+    template: ""
+    configref:
+      name: sourceconfig-value
+      namespace: default
+  - type: jinja2
+    name: block3
+    version: v0.0.1
+    template: |
+      {% set namespace = appteamsimplegetters.spec.namespace %}
+      apiVersion: iam.cnrm.cloud.google.com/v1beta1
+      kind: IAMServiceAccount
+      metadata:
+        annotations:
+          cnrm.cloud.google.com/project-id: anz-x-apps-platdev-99bb42
+        labels:
+          label-one: "composition-test"
+          label-two: {{ namespace }}
+        name: cf-compos-test-new
+        namespace: platform-kcc-poc-apps-platdev
+      spec:
+        displayName: {{ values.configRef.source_value }}
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    controller-gen.kubebuilder.io/version: v0.13.0
+  name: appteamsimplegetters.cloudfoundations.anz.com
+spec:
+  group: cloudfoundations.anz.com
+  names:
+    categories:
+    - facade
+    - facades
+    kind: AppTeamSimpleGetter
+    listKind: AppTeamSimpleGetterList
+    plural: appteamsimplegetters
+    singular: appteamsimplegetter
+  scope: Namespaced
+  versions:
+  - name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        description: AppTeamSimpleGetter is the Schema for the AppteamSimpleGetters API
+        properties:
+          apiVersion:
+            description: 'APIVersion defines the versioned schema of this representation
+              of an object. Servers should convert recognized schemas to the latest
+              internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
+            type: string
+          kind:
+            description: 'Kind is a string value representing the REST resource this
+              object represents. Servers may infer this from the endpoint the client
+              submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+            type: string
+          metadata:
+            type: object
+          spec:
+            description: AppTeamSimpleGetterSpec defines the desired state of AppTeamSimpleGetter
+            properties:
+              namespace:
+                type: string
+              source_value:
+                type: string
+            required:
+            - namespace
+            - source_value
+            type: object
+          status:
+            description: AppTeamSimpleGetterStatus defines the observed state of AppTeamSimpleGetter
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}
+---

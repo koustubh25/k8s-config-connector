@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  creationTimestamp: null
+  name: myappteam
+---
+apiVersion: composition.google.com/v1alpha1
+kind: Context
+metadata:
+  name: context
+  namespace: myappteam
+spec:
+  project: anz-x-apps-platdev-99bb42

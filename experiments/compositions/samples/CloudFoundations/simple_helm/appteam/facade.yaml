@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  creationTimestamp: null
+  name: myappteamsimplehelm
+---
+apiVersion: facade.compositions.google.com/v1
+kind: HTeam
+metadata:
+  name: teampage
+  namespace: myappteamsimplehelm
+spec:
+  apps:
+  - name: audit
+    description: Corporate Audits
+  - name: global
+    description: Global Risk
+  - name: market
+    description: Market Risks
